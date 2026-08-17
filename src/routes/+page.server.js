@@ -1,14 +1,13 @@
 import { randomUUID } from 'crypto';
-
-const users = {};
+import { redirect } from '@sveltejs/kit';
+import { users, broadcast } from '$lib/store';
 
 export function load({ cookies }) {
   const userId = cookies.get('userId');
-  const user = users[userId];
-  if (user) {
-    return { user, users: null };
+  if (userId && users[userId]) {
+    throw redirect(302, '/dashboard');
   }
-  return { user: null, users: Object.values(users) };
+  return { users: Object.values(users) };
 }
 
 export const actions = {
@@ -19,7 +18,9 @@ export const actions = {
       const id = randomUUID();
       users[id] = { id, name };
       cookies.set('userId', id, { path: '/' });
+      broadcast();
     }
+    throw redirect(303, '/');
   },
   login: async ({ request, cookies }) => {
     const data = await request.formData();
@@ -27,17 +28,6 @@ export const actions = {
     if (users[id]) {
       cookies.set('userId', id, { path: '/' });
     }
-  },
-  updateName: async ({ request, cookies }) => {
-    const userId = cookies.get('userId');
-    const user = users[userId];
-    const data = await request.formData();
-    const name = (data.get('name') || '').toString().trim();
-    if (user && name) {
-      user.name = name;
-    }
-  },
-  logout: async ({ cookies }) => {
-    cookies.delete('userId', { path: '/' });
+    throw redirect(303, '/dashboard');
   }
 };
