@@ -1,13 +1,14 @@
 <script>
   import { invalidateAll } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { io } from 'socket.io-client';
 
   export let data;
 
   onMount(() => {
-    const es = new EventSource('/events');
-    es.onmessage = () => invalidateAll();
-    return () => es.close();
+    const socket = io();
+    socket.on('update', invalidateAll);
+    return () => socket.disconnect();
   });
 </script>
 

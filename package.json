@@ -1,5 +1,5 @@
 {
-  "name": "leaguefm",
+  "name": "sveltekit-app",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -14,5 +14,9 @@
     "@sveltejs/vite-plugin-svelte": "^4.0.4",
     "svelte": "^5.56.9",
     "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   }
 }
